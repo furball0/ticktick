@@ -1,0 +1,11 @@
+version: '3.5'
+
+services:
+  ticktick:
+    container_name: ticktick
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRESS_USER=admin
+    image: postgres:alpine
