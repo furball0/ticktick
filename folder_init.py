@@ -14,7 +14,7 @@ con = psycopg2.connect(
 )
 cur_person_id = con.cursor()
 
-cur_person_id.execute("select person_id, created_dttm from prod.person")
+cur_person_id.execute("select person_id from prod.person")
 cur = con.cursor()
 for i in cur_person_id:
     person_id = i[0]

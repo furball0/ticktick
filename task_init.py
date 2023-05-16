@@ -62,23 +62,22 @@ for i in cur_person_list_id:
     for _ in range(random.randint(0, 100)):
         task_nm = result_task_name_list[random.randint(0, len(result_task_name_list)-1)]
         task_desc = faker.paragraph(nb_sentences=random.randint(0, 10))
-        is_note_flg = 0
         priority_nm = priority[random.randint(0,2)]
         completed_flg = random.randint(0, 1)
-        created_dttm = randomtimestamp.randomtimestamp()
+        created_dttm = randomtimestamp.randomtimestamp(start_year=2022)
         if completed_flg:
             actual_end_dttm = randomtimestamp.randomtimestamp(start=created_dttm)
             cur.execute(f"""
-                insert into prod.task(task_nm, task_desc, is_note_flg, priority_nm, \
+                insert into prod.task(task_nm, task_desc, priority_nm, \
                                       actual_end_dttm, completed_flg, list_id, completed_by_person_id, created_dttm)
-                values ('{task_nm}', '{task_desc}', '{is_note_flg}', '{priority_nm}', '{actual_end_dttm}', \
+                values ('{task_nm}', '{task_desc}', '{priority_nm}', '{actual_end_dttm}', \
                         '{completed_flg}', '{list_id}', '{person_id}', '{created_dttm}')
             """)
         else:
             cur.execute(f"""
-                            insert into prod.task(task_nm, task_desc, is_note_flg, priority_nm, \
+                            insert into prod.task(task_nm, task_desc, priority_nm, \
                                                   completed_flg, list_id,  created_dttm)
-                            values ('{task_nm}', '{task_desc}', '{is_note_flg}', '{priority_nm}', \
+                            values ('{task_nm}', '{task_desc}', '{priority_nm}', \
                                     '{completed_flg}', '{list_id}', '{created_dttm}')
                         """)
         con.commit()
@@ -92,9 +91,8 @@ for i in cur_person_list_id:
         tag_ids = cur_tag.fetchall()
         if len(tag_ids) > 0:
             tag_id = tag_ids[random.randint(0, len(tag_ids)-1)][0]
-            task_x_tag_created_dttm = randomtimestamp.randomtimestamp(start=created_dttm)
-            cur.execute(f"""insert into prod.task_x_tag (task_id, tag_id, created_dttm) 
-                        values ('{task_id_new}', '{tag_id}', '{task_x_tag_created_dttm}')
+            cur.execute(f"""insert into prod.task_x_tag (task_id, tag_id) 
+                        values ('{task_id_new}', '{tag_id}')
                         """)
         ### COMMENT
         if random.randint(0, 1):
@@ -104,24 +102,6 @@ for i in cur_person_list_id:
                         insert into prod.comment (comment_txt, task_id, person_id, created_dttm)
                         values ('{comment_txt}', '{task_id_new}', '{person_id}', '{comment_created_dttm}')
                         """)
-        ### TASK_X_SUBTASK
-        num = random.randint(1, 10)
-        if num >= 9:
-            cur_task_x_subtask = con.cursor()
-            cur_task_x_subtask.execute(f"""select task_id 
-                                             from prod.task t 
-                                                  inner join prod.person_x_list pxl 
-                                                          on t.list_id = pxl.list_id
-                                                         and pxl.relation_type_nm ='OWNER'
-                                                         and person_id = '{person_id}'
-                                        """)
-            task_ids = cur_task_x_subtask.fetchall()
-            if len(task_ids) > 0:
-                task_id_owner = task_ids[random.randint(0, len(task_ids)-1)][0]
-                task_x_subtask_created_dttm = randomtimestamp.randomtimestamp(start=created_dttm)
-                cur.execute(f"""insert into prod.task_x_subtask (task_id, subtask_id, created_dttm) 
-                                values ('{task_id_owner}', '{task_id_new}', '{task_x_subtask_created_dttm}')
-                            """)
     con.commit()
 con.close()
 print('Done')

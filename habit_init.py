@@ -31,7 +31,7 @@ for i, el in enumerate(articles):
 
     lst = new_line.split('</li> ')[:-1]
 
-    result_habit_name_list.extend([x[4:] for x in lst])
+    result_habit_name_list.extend([x[4:69] for x in lst])
 
 print(result_habit_name_list)
 
@@ -53,10 +53,9 @@ cur = con.cursor()
 for i in cur_person_id:
     person_id = i[0]
     print(f"Person_id = {person_id}")
-    person_created_dttm = i[1]
     for num in range(random.randint(0, 3)):
         habit_nm = result_habit_name_list[random.randint(0, len(result_habit_name_list)-1)]
-        start_dt = randomtimestamp.random_date(start=person_created_dttm.date(), end=datetime.date(2023,1,1))
+        start_dt = randomtimestamp.randomtimestamp(start_year=2022)
         repetition_freq = '1 day'
         goal_days_cnt = 30
         completed_flg = random.randint(0, 1)
@@ -66,7 +65,7 @@ for i in cur_person_id:
                         insert into prod.habit 
                         (habit_nm, person_id, start_dt, repetition_freq, goal_days_cnt,\
                          completed_days_cnt, completed_flg) values 
-                         ('{habit_nm}','{person_id}','{start_dt}','{repetition_freq}',\
+                         ('{habit_nm}','{person_id}','{start_dt}'::date,'{repetition_freq}',\
                          '{goal_days_cnt}','{completed_days_cnt}','{completed_flg}')
                         """)
         else:
@@ -75,14 +74,14 @@ for i in cur_person_id:
                         insert into prod.habit 
                         (habit_nm, person_id, start_dt, repetition_freq, goal_days_cnt,\
                         completed_days_cnt, completed_flg) values 
-                        ('{habit_nm}','{person_id}','{start_dt}','{repetition_freq}',\
+                        ('{habit_nm}','{person_id}','{start_dt}'::date,'{repetition_freq}',\
                         '{goal_days_cnt}','{completed_days_cnt}','{completed_flg}')
                         """)
         cur_habit = con.cursor()
         cur_habit.execute(f"""select max(habit_id) from prod.habit""")
         habit_id_new = cur_habit.fetchall()[0][0]
         for k in range(completed_days_cnt):
-            action_dttm = randomtimestamp.randomtimestamp(start=person_created_dttm)
+            action_dttm = randomtimestamp.randomtimestamp(start=start_dt)
             cur.execute(f"""
                         insert into prod.habit_action
                         (habit_id, action_dttm) values 

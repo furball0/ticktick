@@ -27,8 +27,8 @@ while i < 500:
     i += 1
     cur.execute(
         f"""
-        insert into prod.person(person_nm, birth_dt, email, created_dttm)
-        values ('{person_nm}', '{birth_dt}', '{email}', '{created_dttm}')
+        insert into prod.person(person_nm, birth_dt, email)
+        values ('{person_nm}', '{birth_dt}', '{email}')
         """
     )
     con.commit()

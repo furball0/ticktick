@@ -61,7 +61,7 @@ create table prod.tag
 (
     tag_id serial not null primary key,
     tag_nm varchar(65),
-    color_hex_code varchar(65),
+    color_hex_code varchar(7),
     person_id int references prod.person(person_id)
 );
 
